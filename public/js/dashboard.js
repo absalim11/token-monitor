@@ -170,6 +170,14 @@
                     }
                 },
 
+                toLocalDateString(date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+
+                    return year + '-' + month + '-' + day;
+                },
+
                 stopAutoRefresh() {
                     if (this.timer) {
                         clearInterval(this.timer);
@@ -278,16 +286,15 @@
                     if (this.autoRefreshStopped) return;
 
                     try {
-                        const endDate = new Date().toISOString().split('T')[0];
+                        const endDateObject = new Date();
                         const startDate = new Date();
 
-                        if (this.period === '7d') startDate.setDate(startDate.getDate() - 7);
-                        else if (this.period === '30d') startDate.setDate(startDate.getDate() - 30);
-                        else startDate.setDate(startDate.getDate() - 90);
+                        if (this.period === '7d') startDate.setDate(startDate.getDate() - 6);
+                        else startDate.setDate(startDate.getDate() - 29);
 
                         const params = new URLSearchParams({
-                            start: startDate.toISOString().split('T')[0],
-                            end: endDate,
+                            start: this.toLocalDateString(startDate),
+                            end: this.toLocalDateString(endDateObject),
                         });
 
                         const data = await this.requestJson(config.dailySpendUrl + '?' + params.toString());

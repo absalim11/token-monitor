@@ -1,49 +1,62 @@
 # ABW Token Monitor - Milestone Report
 
 ## Project Overview
-Laravel dashboard for monitoring LiteLLM token usage. The app runs in Docker and keeps the frontend stack intentionally simple: Blade, Alpine.js CDN, Tailwind CDN, and a small static dashboard script in `public/js`.
+Laravel dashboard for monitoring LiteLLM token usage. The app runs in Docker and uses a simple frontend stack: Blade, Alpine.js CDN, Tailwind CDN, and a static dashboard controller in `public/js/dashboard.js`.
 
 ---
 
 ## Current Milestone
 
-### Frontend Simplification And Stabilization
-The dashboard frontend was refactored to stay simple without breaking the scope in `PRD.md`.
+### Dashboard Stabilization And LiteLLM Adaptation
+This milestone focused on making the dashboard operational against the real LiteLLM instance and aligning the UI with the actual product needs.
 
-Completed code-quality fixes:
+Completed work:
 
-1. Removed the dependency on Vite for the main application flow
-   - Auth layout now loads Tailwind via CDN
-   - App layout now loads Tailwind via CDN
-   - Alpine is loaded from CDN
-   - No frontend build step is required for the dashboard path
+1. Simplified frontend architecture
+   - Removed dependency on Vite for the main dashboard flow
+   - App and guest layouts now load Tailwind and Alpine via CDN
+   - Dashboard logic lives in `public/js/dashboard.js`
 
-2. Moved dashboard logic out of inline Blade scripts
-   - `dashboard()` and `costTracker()` now live in `public/js/dashboard.js`
-   - Alpine components are registered through the `alpine:init` event
-   - This keeps the code modular without requiring a JS bundler
+2. Stabilized Alpine components
+   - Moved large inline dashboard logic out of Blade
+   - Added safer Alpine bindings for modal/detail rendering
+   - Fixed dark/light mode persistence and mobile/desktop toggle behavior
 
-3. Reduced likely console/runtime errors
-   - Removed the previous reliance on inline global function ordering
-   - Centralized fetch and error handling for dashboard API requests
-   - Dashboard API failures now update UI state more predictably
+3. Improved LiteLLM compatibility
+   - Fixed date parameter mapping to `start_date` and `end_date`
+   - Added fallback from enterprise-only `/global/spend/report` to `/spend/logs`
+   - Normalized daily spend payloads into dashboard-friendly format
+   - Normalized key list and key detail payloads across inconsistent LiteLLM response shapes
 
-4. Preserved PRD scope with a simpler frontend architecture
-   - Per-key monitoring remains in place
-   - Daily spend widget remains in place
-   - Key actions remain in place
-   - Dark mode behavior remains in place
-   - Docker deployment stays simple because no Node/Vite container is needed
+4. Improved virtual key coverage
+   - Added normalization for `key`, `token`, `token_id`, `virtual_key`, alias, models, metadata, spend, and budget fields
+   - Added fallback hydration through `key/info` when `key/list` returns incomplete records
+   - Added key detail modal for inspecting per-key metadata and config
+
+5. Updated cost tracker behavior
+   - Tracker filter reduced to `7 Days` and `30 Days`
+   - Total overall spend is now derived from all loaded virtual keys
+   - Total max budget is now displayed
+   - Daily date bucketing now uses local date strings on the frontend and app timezone normalization on the backend
+
+6. UI scope adjustment
+   - Removed delete action button from the table
+   - Retained refresh, block/unblock, and detail view actions
 
 ---
 
 ## Files Updated In This Milestone
+
+### Backend
+- `app/Http/Controllers/DashboardController.php`
+- `app/Services/LiteLLMService.php`
 
 ### Frontend
 - `public/js/dashboard.js`
 - `resources/views/dashboard/index.blade.php`
 - `resources/views/layouts/app.blade.php`
 - `resources/views/layouts/guest.blade.php`
+- `resources/views/layouts/navigation.blade.php`
 - `resources/views/welcome.blade.php`
 
 ### Cleanup
@@ -52,52 +65,39 @@ Completed code-quality fixes:
 
 ### Documentation
 - `MILESTONE.md`
-
----
-
-## Key Technical Notes
-
-1. The chosen architecture is now intentionally simple:
-   - Tailwind from CDN
-   - Alpine from CDN
-   - Dashboard logic from `public/js/dashboard.js`
-
-2. This avoids Docker complexity around frontend build tooling while still keeping the dashboard code outside Blade templates.
-
-3. This is a tradeoff:
-   - simpler ops and simpler Docker
-   - less structured than a Vite-based frontend pipeline
-
-For the current project scope, that tradeoff is acceptable.
+- `PRD.md`
+- `GUIDE.md`
+- `README.md`
 
 ---
 
 ## Status
 
 - Auth pages: CDN-based frontend assets
-- App layout: CDN-based frontend assets
-- Dashboard Alpine bootstrapping: moved to static JS file
-- Vite dependency for dashboard flow: removed
-- Code quality: improved while keeping the stack simple
+- Dashboard frontend: CDN + static JS
+- Virtual key listing: normalized and hydrated
+- Virtual key detail modal: available
+- Daily cost tracker: running with LiteLLM fallback
+- Dark mode: persisted and working across layouts
+- Delete action: removed from UI
 
 ---
 
 ## Remaining Verification
 
-Testing should be done only through the Docker environment for this project.
+Testing should still be done in the Docker runtime environment.
 
 Recommended checks:
 
-1. Open `/login` and confirm auth pages render correctly
-2. Login and open `/dashboard`
-3. Confirm no Alpine expression errors appear in browser console
-4. Confirm dashboard API calls resolve correctly
-5. Confirm dark mode toggle still works
-6. Confirm period switching updates the cost widget
-7. Confirm key actions (`block`, `unblock`, `delete`) still send valid requests
-8. Confirm auto-refresh still runs according to the current refresh interval
+1. Login and open `/dashboard`
+2. Confirm all virtual keys appear in cards and table
+3. Confirm manager-mode keys also appear
+4. Confirm key detail modal loads metadata/config
+5. Confirm Daily Cost Tracker totals match expected spend/budget closely
+6. Confirm dark/light mode persists across refresh and auth pages
+7. Confirm block/unblock actions still work
 
 ---
 
 **Last Updated**: 2026-05-22
-**Status**: Simple frontend refactor completed, Docker runtime verification still required
+**Status**: Dashboard refactor and documentation sync completed

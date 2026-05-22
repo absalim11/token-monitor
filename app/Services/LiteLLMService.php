@@ -346,7 +346,9 @@ class LiteLLMService
         }
 
         try {
-            return Carbon::parse($value)->toDateString();
+            return Carbon::parse($value)
+                ->setTimezone(config('app.timezone'))
+                ->toDateString();
         } catch (\Exception $e) {
             return null;
         }

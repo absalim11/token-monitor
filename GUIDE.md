@@ -6,10 +6,10 @@ ABW Token Monitor Dashboard adalah aplikasi monitoring real-time untuk penggunaa
 
 ## Features
 
-- **Real-time Monitoring**: Auto-refresh setiap 10 detik
+- **Real-time Monitoring**: Auto-refresh setiap 3 detik
 - **Per-Key Statistics**: Track spend, budget, usage, dan expiry per key
-- **Daily Cost Tracking**: Visualisasi biaya harian (7d, 30d, 90d)
-- **Key Management**: Block, unblock, delete keys
+- **Daily Cost Tracking**: Visualisasi biaya harian (7d, 30d), total overall spend, dan total max budget
+- **Key Management**: View details, block, unblock keys
 - **Dark Mode**: Support tema gelap
 - **Database Error Handling**: Auto-stop refresh saat koneksi database gagal
 - **Responsive Design**: Mobile-friendly
@@ -119,11 +119,13 @@ services:
 
 **Detailed Statistics Table**:
 - Kolom: Token, Models, Spend, Budget, Usage, User, Status, Expires, Actions
-- Actions: Refresh, Block/Unblock, Delete
+- Actions: Refresh, View Details, Block/Unblock
 
 **Daily Cost Tracker**:
-- Period selector: 7 Days, 30 Days, 90 Days
-- Total spend untuk period terpilih
+- Period selector: 7 Days, 30 Days
+- Total overall spend seluruh virtual key
+- Total max budget seluruh virtual key
+- Spend untuk period terpilih
 - Average daily spend
 - Visualisasi bar chart per hari
 
@@ -139,6 +141,10 @@ services:
 
 ### Managing Keys
 
+**View Key Detail**:
+1. Klik tombol detail/eye di kolom Actions atau link `View details` di card
+2. Modal akan menampilkan key, alias, models, spend, budget, status, config, dan metadata
+
 **Block a Key**:
 1. Klik tombol ❌ di kolom Actions
 2. Confirm dialog akan muncul
@@ -149,15 +155,10 @@ services:
 2. Confirm dialog akan muncul
 3. Status kembali ke normal
 
-**Delete a Key**:
-1. Klik tombol 🗑️ di kolom Actions
-2. Confirm dialog akan muncul dengan nama key
-3. **Irreversible** - key akan dihapus permanen
-
 ### Dark Mode
 
 Toggle dark mode dengan klik icon 🌙/☀️ di navbar (sebelah profil user).
-Preference disimpan di browser localStorage.
+Preference disimpan di browser localStorage dengan key `theme` (`dark` / `light`) dan diterapkan juga pada halaman auth.
 
 ## Troubleshooting
 
@@ -202,6 +203,14 @@ Preference disimpan di browser localStorage.
 3. Check browser console untuk JavaScript errors
 4. Clear browser cache dan localStorage
 
+### Daily Cost Tracker Not Matching LiteLLM Exactly
+
+**Catatan**:
+1. Beberapa deployment LiteLLM membatasi `/global/spend/report` untuk enterprise only
+2. Dashboard akan fallback ke `/spend/logs`
+3. Total overall spend di panel cost tracker diambil dari total spend seluruh virtual key yang sudah diload
+4. Bucket harian dinormalisasi ke timezone aplikasi untuk mengurangi mismatch tanggal
+
 ## Development
 
 ### Project Structure
@@ -216,6 +225,9 @@ llm-monitor/
 │   │   └── LiteLLMService.php        # LiteLLM API client
 │   └── Exceptions/
 │       └── LiteLLMDatabaseException.php
+├── public/
+│   └── js/
+│       └── dashboard.js              # Alpine dashboard logic
 ├── config/
 │   └── litellm.php                   # LiteLLM configuration
 ├── resources/views/
@@ -239,9 +251,9 @@ llm-monitor/
 ```
 GET  /api/health           # Health check
 GET  /api/keys             # List all keys
+GET  /api/keys/info        # Get key detail
 GET  /api/daily-spend      # Get daily spend report
 GET  /api/models           # List available models
-POST /api/keys/delete     # Delete a key
 POST /api/keys/block      # Block a key
 POST /api/keys/unblock    # Unblock a key
 ```

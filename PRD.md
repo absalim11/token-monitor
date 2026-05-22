@@ -4,7 +4,7 @@
 
 **Objective**: Real-time monitoring dashboard for LLM token usage via LiteLLM API.
 
-**Scope**: Single-page dashboard with 10-second auto-refresh, dockerized Laravel application, direct API integration (no database storage).
+**Scope**: Single-page dashboard with 3-second auto-refresh, dockerized Laravel application, direct API integration (no database storage).
 
 **Focus Areas**:
 - Per-key usage monitoring
@@ -64,12 +64,13 @@ Columns:
 - User ID
 - Status
 - **Expires** (masa aktif)
-- Actions (Refresh/Delete/Block/Unblock)
+- Actions (Refresh/View Details/Block/Unblock)
 
 #### D. Daily Cost Tracking
-- Total daily spend across all keys
-- Daily spend per key (last 7 days)
-- Cost trend chart
+- Total spend across all loaded virtual keys
+- Total max budget across all loaded virtual keys
+- Daily spend list and trend chart for `7 Days` and `30 Days`
+- Daily average for the selected period
 
 #### E. User Statistics (Optional)
 - Total users count
@@ -124,7 +125,7 @@ Columns:
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
-| GET | `/global/spend/report?start=<date>&end=<date>` | Daily spend report |
+| GET | `/global/spend/report?start=<date>&end=<date>` | Daily spend report (enterprise-only on some LiteLLM deployments) |
 | GET | `/spend/logs?start=<date>&end=<date>&summarize=true` | Spend logs (aggregated) |
 | POST | `/global/spend/reset` | Reset all spend (master only) |
 
@@ -161,7 +162,7 @@ Columns:
 |-------|-----------|
 | Backend | PHP 8.3+ / Laravel 13 |
 | HTTP Client | Guzzle (built-in) |
-| Frontend | Laravel Blade + Alpine.js + Tailwind CSS |
+| Frontend | Laravel Blade + Alpine.js CDN + Tailwind CSS CDN |
 | Auth | Laravel Breeze |
 | Cache | Laravel Cache (Redis or File) |
 | Database | SQLite (auth only) |
@@ -198,6 +199,7 @@ llm-monitor/
 - Make Guzzle HTTP calls to LiteLLM API
 - Handle authentication via master key
 - Parse and normalize API responses
+- Apply fallbacks when LiteLLM enterprise-only endpoints are unavailable
 - Cache responses with TTL
 
 **Methods**:
@@ -220,6 +222,7 @@ class LiteLLMService
 
     // Spend Tracking
     public function getGlobalSpendReport(string $startDate, string $endDate): array;
+    public function getDailySpendReport(string $startDate, string $endDate): array;
     public function getSpendLogs(string $startDate, string $endDate, bool $summarize): array;
 
     // Models
@@ -244,7 +247,7 @@ class LiteLLMService
 |--------|-------|---------|
 | GET | /dashboard | Main dashboard view |
 | GET | /api/keys | List all keys (from LiteLLM) |
-| GET | /api/keys/{key}/info | Get key details |
+| GET | /api/keys/info?key=... | Get key details |
 | POST | /api/keys/generate | Generate new key |
 | POST | /api/keys/delete | Delete key |
 | POST | /api/keys/block | Block key |
@@ -418,11 +421,11 @@ DB_CONNECTION=sqlite
 - [ ] Login page works with Laravel default auth
 - [ ] Dashboard displays all virtual keys with spend/budget
 - [ ] Shows token expiry/masa aktif for each key
-- [ ] Daily cost tracking displayed (last 7 days)
+- [ ] Daily cost tracking displayed (7-day and 30-day views)
 - [ ] Auto-refreshes every 3 seconds without full page reload
 - [ ] Tosca-grey color scheme implemented
 - [ ] API responses cached (3-5s TTL)
-- [ ] Key operations work (block/unblock/delete/generate)
+- [ ] Key operations work (block/unblock/detail/generate)
 - [ ] Handles API errors gracefully
 
 ---
@@ -437,6 +440,7 @@ DB_CONNECTION=sqlite
 - **Error handling**: Show degraded UI if API is unavailable
 - **Master Key Required**: All operations require LiteLLM master key
 - **Team features removed**: Focus on key and user monitoring only
+- **Frontend simplicity preferred**: Avoid requiring a frontend build pipeline for the dashboard
 
 ---
 
