@@ -65,20 +65,20 @@
 
 #### Tasks:
 - [ ] Create `config/litellm.php` config file
-- [ ] Add LiteLLM configuration to `.env.example`
+- [ ] Add AbworksLLM configuration to `.env.example`
 - [ ] Configure Guzzle HTTP client base setup
 - [ ] Create service provider if needed
-- [ ] Test Guzzle connection to LiteLLM API (health check)
+- [ ] Test Guzzle connection to AbworksLLM API (health check)
 - [ ] Configure cache settings (Redis or File)
 
 **Acceptance Criteria**:
 - Config file loaded correctly
-- Guzzle can make requests to LiteLLM API
+- Guzzle can make requests to AbworksLLM API
 - Cache driver configured and working
 
 ---
 
-### Story 4: LiteLLM Service - Key Management (Day 2)
+### Story 4: AbworksLLM Service - Key Management (Day 2)
 
 **ID**: SPRINT-1-004
 **Priority**: High
@@ -104,7 +104,7 @@
 
 ---
 
-### Story 5: LiteLLM Service - User & Spend (Day 2)
+### Story 5: AbworksLLM Service - User & Spend (Day 2)
 
 **ID**: SPRINT-1-005
 **Priority**: High
@@ -288,7 +288,7 @@
 #### Tasks:
 - [ ] Create `resources/views/dashboard/index.blade.php`
 - [ ] Integrate all components
-- [ ] Add Alpine.js auto-refresh (3 seconds)
+- [ ] Add Alpine.js auto-refresh (11 seconds)
 - [ ] Add refresh countdown timer
 - [ ] Add last refresh timestamp
 - [ ] Add manual refresh button
@@ -297,7 +297,7 @@
 
 **Acceptance Criteria**:
 - Dashboard renders all components
-- Auto-refreshes every 3 seconds
+- Auto-refreshes every 11 seconds
 - Manual refresh works
 - Errors displayed gracefully
 
@@ -331,7 +331,7 @@
 
 #### Tasks:
 - [ ] Test Docker compose - cold start
-- [ ] Test 3-second auto-refresh - verify no API abuse
+- [ ] Test 11-second auto-refresh - verify no API abuse
 - [ ] Test cache verification - check TTL works
 - [ ] Test API failure simulation - verify degraded UI
 - [ ] Test all key operations (block/unblock/delete/generate)
@@ -364,7 +364,7 @@
 
 - [ ] Dockerized application runs with single command
 - [ ] Single user authentication working
-- [ ] Dashboard displays key stats with auto-refresh (3s)
+- [ ] Dashboard displays key stats with auto-refresh (11s)
 - [ ] Daily cost tracking functional
 - [ ] Token expiry/masa aktif displayed
 - [ ] Tosca-grey color scheme implemented
@@ -396,7 +396,7 @@
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| LiteLLM API changes | High | Use flexible response parsing, add fallbacks |
+| AbworksLLM API changes | High | Use flexible response parsing, add fallbacks |
 | API rate limiting | Medium | Implement caching (3-5s TTL), handle 429 errors |
 | Docker compatibility | Low | Use standard base images, test on multiple systems |
 | Authentication complexity | Low | Use Laravel Breeze, single user only |

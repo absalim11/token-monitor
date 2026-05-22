@@ -2,11 +2,11 @@
 
 ## Overview
 
-ABW Token Monitor Dashboard adalah aplikasi monitoring real-time untuk penggunaan token LLM melalui LiteLLM Proxy API. Dashboard ini menyediakan tracking per-key, biaya harian, expiry management, dan status koneksi API.
+ABW Token Monitor Dashboard adalah aplikasi monitoring real-time untuk penggunaan token LLM melalui AbworksLLM API. Dashboard ini menyediakan tracking per-key, biaya harian, expiry management, dan status koneksi API.
 
 ## Features
 
-- **Real-time Monitoring**: Auto-refresh setiap 3 detik
+- **Real-time Monitoring**: Auto-refresh setiap 11 detik
 - **Per-Key Statistics**: Track spend, budget, usage, dan expiry per key
 - **Daily Cost Tracking**: Visualisasi biaya harian (7d, 30d), total overall spend, dan total max budget
 - **Key Management**: View details, block, unblock keys
@@ -17,7 +17,7 @@ ABW Token Monitor Dashboard adalah aplikasi monitoring real-time untuk penggunaa
 ## Prerequisites
 
 - Docker & Docker Compose
-- LiteLLM Proxy API dengan database terkoneksi
+- AbworksLLM API dengan database terkoneksi
 - Web browser modern (Chrome, Firefox, Safari, Edge)
 
 ## Installation
@@ -40,7 +40,7 @@ APP_KEY=base64:...
 APP_DEBUG=false
 APP_URL=http://localhost:8081
 
-# LiteLLM API Configuration
+# AbworksLLM API Configuration
 LITELLM_API_URL=https://litellm-api.up.railway.app
 LITELLM_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
 LITELLM_CACHE_TTL=5
@@ -72,7 +72,7 @@ Login dengan:
 
 ## Configuration
 
-### LiteLLM API Settings
+### AbworksLLM API Settings
 
 Edit `config/litellm.php`:
 
@@ -164,13 +164,13 @@ Preference disimpan di browser localStorage dengan key `theme` (`dark` / `light`
 
 ### "No connected db" Error
 
-**Problem**: LiteLLM API reported database connection failed.
+**Problem**: AbworksLLM API reported database connection failed.
 
 **Solution**:
-1. Check LiteLLM server status dan koneksi database
+1. Check AbworksLLM server status dan koneksi database
 2. Verify LITELLM_API_URL dan LITELLM_API_KEY di .env
 3. Auto-refresh akan otomatis berhenti untuk mencegah excessive API calls
-4. Perbaiki koneksi database LiteLLM
+4. Perbaiki koneksi database AbworksLLM
 5. Refresh dashboard secara manual
 
 ### Dashboard Not Loading
@@ -189,7 +189,7 @@ Preference disimpan di browser localStorage dengan key `theme` (`dark` / `light`
 
 **Solution**:
 1. Verify LITELLM_API_URL correct
-2. Check firewall/network ke LiteLLM API
+2. Check firewall/network ke AbworksLLM API
 3. Verify API key valid
 4. Test API directly: `curl -H "Authorization: Bearer YOUR_KEY" https://litellm-api.example.com/health`
 
@@ -203,10 +203,10 @@ Preference disimpan di browser localStorage dengan key `theme` (`dark` / `light`
 3. Check browser console untuk JavaScript errors
 4. Clear browser cache dan localStorage
 
-### Daily Cost Tracker Not Matching LiteLLM Exactly
+### Daily Cost Tracker Not Matching AbworksLLM Exactly
 
 **Catatan**:
-1. Beberapa deployment LiteLLM membatasi `/global/spend/report` untuk enterprise only
+1. Beberapa deployment AbworksLLM membatasi `/global/spend/report` untuk enterprise only
 2. Dashboard akan fallback ke `/spend/logs`
 3. Total overall spend di panel cost tracker diambil dari total spend seluruh virtual key yang sudah diload
 4. Bucket harian dinormalisasi ke timezone aplikasi untuk mengurangi mismatch tanggal
@@ -222,14 +222,14 @@ llm-monitor/
 │   │   ├── DashboardController.php  # Dashboard endpoints
 │   │   └── KeyController.php         # Key management endpoints
 │   ├── Services/
-│   │   └── LiteLLMService.php        # LiteLLM API client
+│   │   └── LiteLLMService.php        # AbworksLLM API client
 │   └── Exceptions/
 │       └── LiteLLMDatabaseException.php
 ├── public/
 │   └── js/
 │       └── dashboard.js              # Alpine dashboard logic
 ├── config/
-│   └── litellm.php                   # LiteLLM configuration
+│   └── litellm.php                   # AbworksLLM configuration
 ├── resources/views/
 │   ├── layouts/
 │   │   ├── app.blade.php             # Main layout
@@ -302,7 +302,7 @@ tailwind.config = {
 
 - **Authentication**: Laravel Breeze dengan single user admin
 - **CSRF Protection**: Token required untuk semua POST requests
-- **API Key Encryption**: LiteLLM API key disimpan di environment variable
+- **API Key Encryption**: AbworksLLM API key disimpan di environment variable
 - **Rate Limiting**: Cache TTL mencegah excessive API calls
 - **Input Validation**: Laravel validation untuk semua inputs
 

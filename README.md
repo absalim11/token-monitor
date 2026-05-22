@@ -1,6 +1,6 @@
 # ABW Token Monitor
 
-ABW Token Monitor is a Laravel dashboard for monitoring LiteLLM virtual key usage, spend, budget, expiry, and health status.
+ABW Token Monitor is a Laravel dashboard for monitoring AbworksLLM virtual key usage, spend, budget, expiry, and health status.
 
 ## Stack
 
@@ -24,20 +24,20 @@ This keeps the Docker workflow simple while still allowing modular Alpine logic.
 
 ## Main Features
 
-- Real-time dashboard with 3-second auto-refresh
+- Real-time dashboard with 11-second auto-refresh
 - Virtual key cards and detailed statistics table
 - Key detail modal
 - Daily Cost Tracker with `7 Days` and `30 Days` filters
 - Overall spend and total max budget summary
 - Block / unblock key actions
 - Dark / light mode with persisted browser preference
-- LiteLLM API health status
+- AbworksLLM API health status
 
-## LiteLLM Compatibility Notes
+## AbworksLLM Compatibility Notes
 
-The dashboard currently adapts to real LiteLLM response behavior:
+The dashboard currently adapts to real AbworksLLM response behavior:
 
-- sends `start_date` / `end_date` to LiteLLM
+- sends `start_date` / `end_date` to AbworksLLM
 - falls back from `/global/spend/report` to `/spend/logs` when enterprise-only endpoints are unavailable
 - normalizes inconsistent `key/list` and `key/info` payload shapes
 - hydrates incomplete key list entries through `key/info` when needed

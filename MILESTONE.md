@@ -1,14 +1,14 @@
 # ABW Token Monitor - Milestone Report
 
 ## Project Overview
-Laravel dashboard for monitoring LiteLLM token usage. The app runs in Docker and uses a simple frontend stack: Blade, Alpine.js CDN, Tailwind CDN, and a static dashboard controller in `public/js/dashboard.js`.
+Laravel dashboard for monitoring AbworksLLM token usage. The app runs in Docker and uses a simple frontend stack: Blade, Alpine.js CDN, Tailwind CDN, and a static dashboard controller in `public/js/dashboard.js`.
 
 ---
 
 ## Current Milestone
 
-### Dashboard Stabilization And LiteLLM Adaptation
-This milestone focused on making the dashboard operational against the real LiteLLM instance and aligning the UI with the actual product needs.
+### Dashboard Stabilization And AbworksLLM Adaptation
+This milestone focused on making the dashboard operational against the real AbworksLLM instance and aligning the UI with the actual product needs.
 
 Completed work:
 
@@ -22,17 +22,17 @@ Completed work:
    - Added safer Alpine bindings for modal/detail rendering
    - Fixed dark/light mode persistence and mobile/desktop toggle behavior
 
-3. Improved LiteLLM compatibility
+3. Improved AbworksLLM compatibility
    - Fixed date parameter mapping to `start_date` and `end_date`
    - Added fallback from enterprise-only `/global/spend/report` to `/spend/logs`
    - Normalized daily spend payloads into dashboard-friendly format
-   - Normalized key list and key detail payloads across inconsistent LiteLLM response shapes
+   - Normalized key list and key detail payloads across inconsistent AbworksLLM response shapes
 
 4. Improved virtual key coverage
    - Added normalization for `key`, `token`, `token_id`, `virtual_key`, alias, models, metadata, spend, and budget fields
    - Added fallback hydration through `key/info` when `key/list` returns incomplete records
    - Added key detail modal for inspecting per-key metadata and config
-   - Mapped LiteLLM `info.key_alias` into dashboard aliases after validating the raw API response
+   - Mapped AbworksLLM `info.key_alias` into dashboard aliases after validating the raw API response
    - Fixed alias rendering for key overview cards and Detailed Statistics User column to support tracing by alias name
 
 5. Updated cost tracker behavior
@@ -79,7 +79,7 @@ Completed work:
 - Dashboard frontend: CDN + static JS
 - Virtual key listing: normalized and hydrated
 - Virtual key detail modal: available
-- Daily cost tracker: running with LiteLLM fallback
+- Daily cost tracker: running with AbworksLLM fallback
 - Dark mode: persisted and working across layouts
 - Delete action: removed from UI
 

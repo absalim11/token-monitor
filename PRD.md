@@ -2,16 +2,16 @@
 
 ## Project Overview
 
-**Objective**: Real-time monitoring dashboard for LLM token usage via LiteLLM API.
+**Objective**: Real-time monitoring dashboard for LLM token usage via AbworksLLM API.
 
-**Scope**: Single-page dashboard with 3-second auto-refresh, dockerized Laravel application, direct API integration (no database storage).
+**Scope**: Single-page dashboard with 11-second auto-refresh, dockerized Laravel application, direct API integration (no database storage).
 
 **Focus Areas**:
 - Per-key usage monitoring
 - Daily cost tracking
 - Token expiry/masa aktif
 
-**LiteLLM API Base URL**: `https://ai.abworks.web.id`
+**AbworksLLM API Base URL**: `https://ai.abworks.web.id`
 
 ---
 
@@ -22,7 +22,7 @@
 - Periodic Laravel Jobs fetch usage
 
 ### After (Current)
-- Direct Guzzle HTTP calls to LiteLLM API
+- Direct Guzzle HTTP calls to AbworksLLM API
 - Response caching (3-5 seconds) to avoid API throttling
 - No persistent storage for statistics
 - Stateless monitoring
@@ -33,7 +33,7 @@
 
 ### 1. Authentication
 - **Single User**: Built-in Laravel Auth (Breeze)
-- **API Credentials**: LiteLLM Master Key stored in `.env`
+- **API Credentials**: AbworksLLM Master Key stored in `.env`
 - **Session**: Default Laravel session management
 
 ### 2. Dashboard Components
@@ -76,7 +76,7 @@ Columns:
 - Total users count
 - Per-user spend summary
 
-### 3. API Integration (LiteLLM)
+### 3. API Integration (AbworksLLM)
 
 **Base URL**: `https://litellm-api.up.railway.app/`
 
@@ -84,7 +84,7 @@ Columns:
 
 ---
 
-## LiteLLM API Endpoints
+## AbworksLLM API Endpoints
 
 ### Key Management (Primary for Dashboard)
 
@@ -125,7 +125,7 @@ Columns:
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
-| GET | `/global/spend/report?start=<date>&end=<date>` | Daily spend report (enterprise-only on some LiteLLM deployments) |
+| GET | `/global/spend/report?start=<date>&end=<date>` | Daily spend report (enterprise-only on some AbworksLLM deployments) |
 | GET | `/spend/logs?start=<date>&end=<date>&summarize=true` | Spend logs (aggregated) |
 | POST | `/global/spend/reset` | Reset all spend (master only) |
 
@@ -140,7 +140,7 @@ Columns:
 ## Non-Functional Requirements
 
 ### Performance
-- **Auto-refresh**: Every 3 seconds via JavaScript/Alpine.js
+- **Auto-refresh**: Every 11 seconds via JavaScript/Alpine.js
 - **API Caching**: Laravel Cache (3-5 seconds TTL) to prevent API abuse
 - **Page load**: Under 1 second
 - **Database**: SQLite (for auth only)
@@ -191,15 +191,15 @@ llm-monitor/
 
 ---
 
-## LiteLLM Service
+## AbworksLLM Service
 
 ### Service Class: `LiteLLMService`
 
 **Responsibilities**:
-- Make Guzzle HTTP calls to LiteLLM API
+- Make Guzzle HTTP calls to AbworksLLM API
 - Handle authentication via master key
 - Parse and normalize API responses
-- Apply fallbacks when LiteLLM enterprise-only endpoints are unavailable
+- Apply fallbacks when AbworksLLM enterprise-only endpoints are unavailable
 - Cache responses with TTL
 
 **Methods**:
@@ -246,7 +246,7 @@ class LiteLLMService
 | Method | Route | Purpose |
 |--------|-------|---------|
 | GET | /dashboard | Main dashboard view |
-| GET | /api/keys | List all keys (from LiteLLM) |
+| GET | /api/keys | List all keys (from AbworksLLM) |
 | GET | /api/keys/info?key=... | Get key details |
 | POST | /api/keys/generate | Generate new key |
 | POST | /api/keys/delete | Delete key |
@@ -258,7 +258,7 @@ class LiteLLMService
 | GET | /api/users/activity | Get daily activity |
 | GET | /api/spend/daily | Get daily spend report |
 | GET | /api/spend/logs | Get spend logs |
-| GET | /api/health | Check LiteLLM API status |
+| GET | /api/health | Check AbworksLLM API status |
 
 ---
 
@@ -271,7 +271,7 @@ class LiteLLMService
 - [ ] Configure Guzzle for API calls
 - [ ] Environment configuration (.env)
 
-### Phase 2: LiteLLM Service (1-2 days)
+### Phase 2: AbworksLLM Service (1-2 days)
 - [ ] Create `LiteLLMService` class
 - [ ] Implement Guzzle client with master key auth
 - [ ] Add caching layer with TTL
@@ -297,7 +297,7 @@ class LiteLLMService
 
 ### Phase 5: Testing (1 day)
 - [ ] Docker compose validation
-- [ ] 3-second refresh testing
+- [ ] 11-second refresh testing
 - [ ] API failure simulation
 - [ ] Cache verification
 - [ ] Key operations testing (block/unblock/delete/generate)
@@ -311,7 +311,7 @@ APP_NAME="ABW Token Monitor"
 APP_ENV=local
 APP_URL=http://localhost:8080
 
-# LiteLLM API Configuration
+# AbworksLLM API Configuration
 LITELLM_API_URL=https://litellm-api.up.railway.app
 LITELLM_API_KEY=your_master_key_here
 
@@ -422,7 +422,7 @@ DB_CONNECTION=sqlite
 - [ ] Dashboard displays all virtual keys with spend/budget
 - [ ] Shows token expiry/masa aktif for each key
 - [ ] Daily cost tracking displayed (7-day and 30-day views)
-- [ ] Auto-refreshes every 3 seconds without full page reload
+- [ ] Auto-refreshes every 11 seconds without full page reload
 - [ ] Tosca-grey color scheme implemented
 - [ ] API responses cached (3-5s TTL)
 - [ ] Key operations work (block/unblock/detail/generate)
@@ -432,13 +432,13 @@ DB_CONNECTION=sqlite
 
 ## Notes & Constraints
 
-- **No database for statistics**: All data from LiteLLM API only
+- **No database for statistics**: All data from AbworksLLM API only
 - **Cache required**: Prevent API abuse with 3-5s TTL cache
 - **Stateless**: Monitoring data not persisted
 - **Single user level**: No role/permission system needed
 - **No complex state management**: Use Alpine.js for minimal reactivity
 - **Error handling**: Show degraded UI if API is unavailable
-- **Master Key Required**: All operations require LiteLLM master key
+- **Master Key Required**: All operations require AbworksLLM master key
 - **Team features removed**: Focus on key and user monitoring only
 - **Frontend simplicity preferred**: Avoid requiring a frontend build pipeline for the dashboard
 

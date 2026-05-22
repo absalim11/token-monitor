@@ -55,7 +55,7 @@
                 autoRefreshStopped: false,
                 apiStatus: 'checking',
                 lastRefresh: '-',
-                countdown: Math.floor((config.refreshInterval || 3000) / 1000),
+                countdown: Math.floor((config.refreshInterval || 11000) / 1000),
                 timer: null,
                 countdownTimer: null,
                 showDetailModal: false,
@@ -363,7 +363,7 @@
                 },
 
                 startAutoRefresh() {
-                    const refreshInterval = config.refreshInterval || 3000;
+                    const refreshInterval = config.refreshInterval || 11000;
                     const resetValue = Math.floor(refreshInterval / 1000);
 
                     this.timer = setInterval(() => {
@@ -375,7 +375,7 @@
                 },
 
                 startCountdown() {
-                    const resetValue = Math.floor((config.refreshInterval || 3000) / 1000);
+                    const resetValue = Math.floor((config.refreshInterval || 11000) / 1000);
 
                     this.countdownTimer = setInterval(() => {
                         if (!this.autoRefreshStopped && this.countdown > 0) {

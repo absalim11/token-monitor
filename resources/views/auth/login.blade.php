@@ -16,13 +16,13 @@
             </div>
 
             <p class="mt-6 max-w-xl text-sm leading-7 text-gray-600 dark:text-gray-300 sm:text-base">
-                Monitor LiteLLM virtual key usage, compare spend against budget, and inspect key-level status from one operational dashboard.
+                Monitor AbworksLLM virtual key usage, compare spend against budget, and inspect key-level status from one operational dashboard.
             </p>
 
             <div class="mt-8 grid gap-4 sm:grid-cols-3">
                 <div class="rounded-2xl border border-tosca/10 bg-gradient-to-br from-tosca/10 to-white p-4 dark:from-tosca/15 dark:to-gray-800">
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">Refresh</p>
-                    <p class="mt-2 text-2xl font-semibold text-gray-900 dark:text-white">3s</p>
+                    <p class="mt-2 text-2xl font-semibold text-gray-900 dark:text-white">11s</p>
                     <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">Live dashboard cadence</p>
                 </div>
                 <div class="rounded-2xl border border-tosca/10 bg-gradient-to-br from-white to-tosca/10 p-4 dark:from-gray-800 dark:to-tosca/15">
@@ -44,7 +44,7 @@
                         <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">Quick access to blocked keys, spend summaries, and detail inspection.</p>
                     </div>
                     <div class="hidden rounded-full bg-white px-3 py-1 text-xs font-semibold text-tosca shadow-sm dark:bg-gray-800 sm:block">
-                        LiteLLM
+                        AbworksLLM
                     </div>
                 </div>
 
