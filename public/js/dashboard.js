@@ -226,6 +226,7 @@
                             this.refreshKeys(),
                             this.refreshDailySpend(),
                         ]);
+                        window.dispatchEvent(new CustomEvent('keys-update', { detail: this.keys }));
                         this.lastRefresh = new Date().toLocaleTimeString();
                         await this.checkApiHealth();
                     } catch (error) {
@@ -242,6 +243,7 @@
                         const data = await this.requestJson(config.keysUrl);
                         if (!data.stop_reload) {
                             this.keys = data.keys || [];
+                            window.dispatchEvent(new CustomEvent('keys-update', { detail: this.keys }));
                         }
                     } catch (error) {
                         this.error = 'Failed to load keys: ' + error.message;
@@ -311,12 +313,6 @@
                     }
                 },
 
-                async deleteKeyAction(key, name) {
-                    if (confirm('Delete key "' + name + '"? This action cannot be undone.')) {
-                        await this.deleteKey(key);
-                    }
-                },
-
                 async postKeyAction(url, key, failureMessage) {
                     try {
                         await this.requestJson(url, {
@@ -341,10 +337,6 @@
 
                 async unblockKey(key) {
                     await this.postKeyAction(config.unblockKeyUrl, key, 'Failed to unblock key');
-                },
-
-                async deleteKey(key) {
-                    await this.postKeyAction(config.deleteKeyUrl, key, 'Failed to delete key');
                 },
 
                 startAutoRefresh() {
@@ -375,9 +367,10 @@
 
         window.Alpine.data('costTracker', function () {
             return {
-                periods: { '7d': '7 Days', '30d': '30 Days', '90d': '90 Days' },
+                periods: { '7d': '7 Days', '30d': '30 Days' },
                 period: '7d',
                 dailySpend: { spend: [] },
+                keys: [],
 
                 init() {
                     window.addEventListener('daily-spend-update', (event) => {
@@ -387,18 +380,30 @@
                     window.addEventListener('period-update', (event) => {
                         this.period = event.detail;
                     });
+
+                    window.addEventListener('keys-update', (event) => {
+                        this.keys = event.detail || [];
+                    });
                 },
 
                 get spendData() {
                     return this.dailySpend.spend || [];
                 },
 
-                get totalSpend() {
+                get overallSpend() {
+                    return this.keys.reduce((sum, key) => sum + (parseFloat(key.spend) || 0), 0);
+                },
+
+                get totalBudget() {
+                    return this.keys.reduce((sum, key) => sum + (parseFloat(key.max_budget) || 0), 0);
+                },
+
+                get periodSpend() {
                     return this.spendData.reduce((sum, day) => sum + (day.spend || 0), 0);
                 },
 
                 get avgDailySpend() {
-                    return this.totalSpend / Math.max(this.spendData.length, 1);
+                    return this.periodSpend / Math.max(this.spendData.length, 1);
                 },
 
                 get maxDailySpend() {
@@ -411,6 +416,11 @@
                     return this.spendData.slice().reverse();
                 },
 
+                formatCurrency(value, digits) {
+                    const amount = Number(value || 0);
+                    return '$' + amount.toFixed(digits || 2);
+                },
+
                 changePeriod(newPeriod) {
                     this.period = newPeriod;
                     window.dispatchEvent(new CustomEvent('change-period', { detail: { period: newPeriod } }));
@@ -418,6 +428,14 @@
 
                 formatDate(dateStr) {
                     return new Date(dateStr).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                    });
+                },
+
+                formatFullDate(dateStr) {
+                    return new Date(dateStr).toLocaleDateString('en-US', {
+                        weekday: 'short',
                         month: 'short',
                         day: 'numeric',
                     });
