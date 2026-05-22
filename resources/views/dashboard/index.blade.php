@@ -94,7 +94,7 @@
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow duration-200">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white" x-text="getDisplayName(key)"></h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white" x-text="(Array.isArray(key.aliases) && key.aliases.length) ? key.aliases[0] : (typeof key.aliases === 'string' && key.aliases.trim() ? key.aliases : '-')"></h3>
                             <p class="text-sm text-gray-500 dark:text-gray-400" x-text="getMaskedKey(key.key)"></p>
                         </div>
                         <span class="px-3 py-1 rounded-full text-xs font-medium" :class="getStatusColor(key)" x-text="getStatusLabel(key)"></span>
@@ -201,7 +201,7 @@
                                             <span class="text-xs font-medium w-8 text-right dark:text-gray-200" x-text="getUsagePercent(key) + '%'"></span>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3 text-xs text-gray-600 dark:text-gray-400" x-text="key.user_id || 'N/A'"></td>
+                                    <td class="px-4 py-3 text-xs text-gray-600 dark:text-gray-400" x-text="(Array.isArray(key.aliases) && key.aliases.length) ? key.aliases[0] : (typeof key.aliases === 'string' && key.aliases.trim() ? key.aliases : '-')"></td>
                                     <td class="px-4 py-3">
                                         <span class="px-2 py-1 rounded-full text-xs font-medium" :class="getStatusColor(key)" x-text="getStatusLabel(key)"></span>
                                     </td>

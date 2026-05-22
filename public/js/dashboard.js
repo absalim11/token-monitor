@@ -87,6 +87,22 @@
                     return this.getMaskedKey(key.key);
                 },
 
+                getPrimaryAlias(key) {
+                    if (!key) {
+                        return '-';
+                    }
+
+                    if (Array.isArray(key.aliases) && key.aliases.length > 0) {
+                        return key.aliases[0] || '-';
+                    }
+
+                    if (typeof key.aliases === 'string' && key.aliases.trim()) {
+                        return key.aliases;
+                    }
+
+                    return '-';
+                },
+
                 getMaskedKey(key) {
                     if (!key) return 'N/A';
                     return key.substring(0, 8) + '...' + key.substring(key.length - 4);

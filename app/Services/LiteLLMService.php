@@ -59,7 +59,7 @@ class LiteLLMService
 
     protected function getCacheKey(string $endpoint, array $params = []): string
     {
-        return 'litellm:' . $endpoint . ':' . md5(json_encode($params));
+        return 'litellm:v3:' . $endpoint . ':' . md5(json_encode($params));
     }
 
     protected function checkDatabaseError(\Illuminate\Http\Client\Response $response): void
@@ -387,7 +387,25 @@ class LiteLLMService
         $info = is_array($payload['info'] ?? null) ? $payload['info'] : [];
         $metadata = is_array($payload['metadata'] ?? null) ? $payload['metadata'] : [];
         $rawModels = $payload['models'] ?? $info['models'] ?? $metadata['models'] ?? [];
-        $rawAliases = $payload['aliases'] ?? $info['aliases'] ?? $metadata['aliases'] ?? $payload['key_alias'] ?? $payload['alias'] ?? null;
+        $rawAliases = $this->firstNonEmptyValue([
+            $payload['key_alias'] ?? null,
+            $info['key_alias'] ?? null,
+            $metadata['key_alias'] ?? null,
+            $payload['aliases'] ?? null,
+            $payload['alias_names'] ?? null,
+            $payload['alias_name'] ?? null,
+            $payload['key_aliases'] ?? null,
+            $payload['key_alias_names'] ?? null,
+            $payload['alias'] ?? null,
+            $info['aliases'] ?? null,
+            $info['alias_names'] ?? null,
+            $info['alias_name'] ?? null,
+            $info['key_aliases'] ?? null,
+            $metadata['aliases'] ?? null,
+            $metadata['alias_names'] ?? null,
+            $metadata['alias_name'] ?? null,
+            $metadata['key_aliases'] ?? null,
+        ]);
         $spend = $payload['spend'] ?? $payload['current_spend'] ?? $payload['total_spend'] ?? $info['spend'] ?? $info['current_spend'] ?? 0;
         $maxBudget = $payload['max_budget'] ?? $payload['budget'] ?? $info['max_budget'] ?? $info['budget'] ?? 0;
         $userId = $payload['user_id'] ?? $info['user_id'] ?? $metadata['user_id'] ?? null;
@@ -522,7 +540,36 @@ class LiteLLMService
     protected function normalizeAliases(mixed $value): array
     {
         if (is_array($value)) {
-            return array_values(array_filter(array_map(fn ($item) => is_scalar($item) ? trim((string) $item) : null, $value)));
+            $aliases = [];
+
+            foreach ($value as $item) {
+                if (is_scalar($item)) {
+                    $alias = trim((string) $item);
+                    if ($alias !== '') {
+                        $aliases[] = $alias;
+                    }
+                    continue;
+                }
+
+                if (is_array($item)) {
+                    foreach (['alias', 'alias_name', 'key_alias', 'key_alias_name', 'name', 'value', 'token_name', 'token'] as $field) {
+                        if (!isset($item[$field])) {
+                            continue;
+                        }
+
+                        if (is_scalar($item[$field])) {
+                            $alias = trim((string) $item[$field]);
+                            if ($alias !== '') {
+                                $aliases[] = $alias;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            return array_values(array_unique($aliases));
         }
 
         if (is_string($value) && trim($value) !== '') {
@@ -530,6 +577,29 @@ class LiteLLMService
         }
 
         return [];
+    }
+
+    protected function firstNonEmptyValue(array $values): mixed
+    {
+        foreach ($values as $value) {
+            if (is_array($value) && !empty($value)) {
+                return $value;
+            }
+
+            if (is_string($value) && trim($value) !== '') {
+                return trim($value);
+            }
+
+            if (is_object($value) && !empty((array) $value)) {
+                return $value;
+            }
+
+            if (is_bool($value) || is_int($value) || is_float($value)) {
+                return $value;
+            }
+        }
+
+        return null;
     }
 
     protected function normalizeStringList(mixed $value): array

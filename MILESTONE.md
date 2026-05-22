@@ -32,6 +32,8 @@ Completed work:
    - Added normalization for `key`, `token`, `token_id`, `virtual_key`, alias, models, metadata, spend, and budget fields
    - Added fallback hydration through `key/info` when `key/list` returns incomplete records
    - Added key detail modal for inspecting per-key metadata and config
+   - Mapped LiteLLM `info.key_alias` into dashboard aliases after validating the raw API response
+   - Fixed alias rendering for key overview cards and Detailed Statistics User column to support tracing by alias name
 
 5. Updated cost tracker behavior
    - Tracker filter reduced to `7 Days` and `30 Days`
